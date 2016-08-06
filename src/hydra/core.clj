@@ -8,7 +8,11 @@
   (instance? hydra.core.IndexWrapper x))
 
 (defn- prepend [elem mp]
-  (into {} (for [[k v] mp] [(conj k elem) v])))
+  (let [prepend-rewrap (fn [k] (cond
+                                 (vector? k) (vec (cons elem k))
+                                 (sequential? k) (cons elem k)
+                                 :default (throw (IllegalArgumentException. "Key must be a sequential collection."))))]
+   (reduce-kv (fn [m k v] (assoc m (prepend-rewrap k) v)) {} mp)))
 
 (defn keys-to-vecs [mp]
   (into {} (for [[k v] mp] [(vec k) v])))

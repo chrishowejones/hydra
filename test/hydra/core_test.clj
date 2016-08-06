@@ -62,8 +62,14 @@
       (index-wrapper? (->IndexWrapper -5)) => true)
 
 
-(fact "prepending an element to a map prepends the element to each key of the map"
+(fact "prepending an element to a map prepends the element to each key of the mapif key is a list"
       (prepend :a {'(:b :c) :d '(:f :g) :h}) => {'(:a :b :c) :d '(:a :f :g) :h})
+
+(fact "prepending an element to a map prepends the element to each key of the map if key is a vector"
+      (prepend :a {[:b :c] :d [:f :g] :h}) => {[:a :b :c] :d [:a :f :g] :h})
+
+(fact "prepending an element to a map key only makes sense for a key that is an ordered collection i.e. implements sequential"
+      (prepend :a {:b "b"}) => (throws IllegalArgumentException))
 
 (fact "simple map path-set test"
       (to-path-map simple-map) => simple-path-map)
